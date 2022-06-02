@@ -234,8 +234,7 @@ static void linmath_test_run_all() {
 	linmath_test_quat_mul_vec3();
 	linmath_test_mat4x4o_mul_quat();
 
-	/* FIXME: Below is the wrecked functional that does not work */
-    // linmath_test_quat_from_mat4x4();
+	linmath_test_quat_from_mat4x4();
 }
 
 

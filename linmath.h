@@ -543,34 +543,26 @@ LINMATH_H_FUNC void mat4x4o_mul_quat(mat4x4 R, mat4x4 const M, quat const q)
 	R[2][3] = M[2][3];
 	R[3][3] = M[3][3];  // typically 1.0, but here we make it general
 }
+/* TODO: there is more that we can do here */
 LINMATH_H_FUNC void quat_from_mat4x4(quat q, mat4x4 const M)
 {
-	float r=0.f;
-	int i;
+	float trace, r;
 
-	int perm[] = { 0, 1, 2, 0, 1 };
-	int *p = perm;
+	trace = 1.f + M[0][0] + M[1][1] + M[2][2];
 
-	for(i = 0; i<3; i++) {
-		float m = M[i][i];
-		if( m < r )
-			continue;
-		m = r;
-		p = &perm[i];
-	}
-
-	r = sqrtf(1.f + M[p[0]][p[0]] - M[p[1]][p[1]] - M[p[2]][p[2]] );
-
-	if(r < 1e-6) {
-		q[0] = 1.f;
-		q[1] = q[2] = q[3] = 0.f;
+	if (trace < 1e-6) {
+		/* TODO: this is probably not correct at all */
+		q[0] = q[1] = q[2] = 0.f;
+		q[3] = 1.f;
 		return;
 	}
 
-	q[0] = r/2.f;
-	q[1] = (M[p[0]][p[1]] - M[p[1]][p[0]])/(2.f*r);
-	q[2] = (M[p[2]][p[0]] - M[p[0]][p[2]])/(2.f*r);
-	q[3] = (M[p[2]][p[1]] - M[p[1]][p[2]])/(2.f*r);
+	r = sqrtf(trace);
+
+	q[0] = (M[1][2] - M[2][1]) / (2.f * r);
+	q[1] = (M[2][0] - M[0][2]) / (2.f * r);
+	q[2] = (M[0][1] - M[1][0]) / (2.f * r);
+	q[3] = r / 2.f;
 }
 
 LINMATH_H_FUNC void mat4x4_arcball(mat4x4 R, mat4x4 const M, vec2 const _a, vec2 const _b, float s)
