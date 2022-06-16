@@ -565,6 +565,22 @@ LINMATH_H_FUNC void quat_from_mat4x4(quat q, mat4x4 const M)
 	q[3] = r / 2.f;
 }
 
+/* TODO: handle perspective and shear */
+LINMATH_H_FUNC void mat4x4_decompose(mat4x4 M, vec3 scale, quat rot, vec3 pos)
+{
+	mat4x4 R;
+
+	vec3_dup(pos, M[3]);
+
+	scale[0] = vec3_len(M[0]);
+	scale[1] = vec3_len(M[1]);
+	scale[2] = vec3_len(M[2]);
+
+	/* Remove the scale from matrix before extracting the rotation */
+	mat4x4_scale_aniso(R, M, 1.f / scale[0], 1.f / scale[1], 1.f / scale[2]);
+	quat_from_mat4x4(rot, R);
+}
+
 LINMATH_H_FUNC void mat4x4_arcball(mat4x4 R, mat4x4 const M, vec2 const _a, vec2 const _b, float s)
 {
 	vec2 a; memcpy(a, _a, sizeof(a));
